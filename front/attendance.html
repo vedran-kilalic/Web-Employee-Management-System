@@ -81,7 +81,7 @@
   $(document).ready(function(){
       $.ajax({
           type: "GET",
-          url: "./dataTxt/attendance.txt", // Specify the path to your text file here
+          url: "./dataTxt/attendance.txt",
           dataType: "text",
           success: function(data) {
               processData(data);

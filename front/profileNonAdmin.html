@@ -66,7 +66,7 @@
   $(document).ready(function() {
     function fetchEmployeeById(id) {
         $.ajax({
-            url: './dataTxt/employee.txt', // Assuming the employee.txt file is in the same directory as this HTML file
+            url: './dataTxt/employee.txt',
             type: 'GET',
             dataType: 'text',
             success: function(data) {
@@ -81,7 +81,7 @@
                         $('#employee-phone-number').text('Phone: ' + employeeData[5]);
                        
                         //$('#profile-pic').attr('src', '../front/img/' + employeeData[1].toLowerCase().replace(/\s/g, '-') + '.jpg');
-                        return; // Stop searching after finding the employee
+                        return;
                     }
                 }
                 // If employee with the given ID is not found
@@ -93,7 +93,6 @@
         });
     }
 
-    // Example: Fetch employee with ID 1
     fetchEmployeeById('1');
 });
 </script>
