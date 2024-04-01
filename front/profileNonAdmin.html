@@ -62,4 +62,40 @@
 </div>
 </div>
 </body>
+<script>
+  $(document).ready(function() {
+    function fetchEmployeeById(id) {
+        $.ajax({
+            url: './dataTxt/employee.txt', // Assuming the employee.txt file is in the same directory as this HTML file
+            type: 'GET',
+            dataType: 'text',
+            success: function(data) {
+                var lines = data.split('\n');
+                for (var i = 0; i < lines.length; i++) {
+                    var employeeData = lines[i].split(',');
+                    if (employeeData[0] === id) {
+                        // Update HTML elements with the selected employee data
+                        $('#employee-name').text(employeeData[1]);
+                        $('#employee-job-title').text(employeeData[2]);
+                        $('#employee-email').text('Email: ' + employeeData[4]);
+                        $('#employee-phone-number').text('Phone: ' + employeeData[5]);
+                       
+                        //$('#profile-pic').attr('src', '../front/img/' + employeeData[1].toLowerCase().replace(/\s/g, '-') + '.jpg');
+                        return; // Stop searching after finding the employee
+                    }
+                }
+                // If employee with the given ID is not found
+                console.error('Employee with ID ' + id + ' not found.');
+            },
+            error: function(xhr, status, error) {
+                console.error('Error fetching employee profile data:', error);
+            }
+        });
+    }
+
+    // Example: Fetch employee with ID 1
+    fetchEmployeeById('1');
+});
+</script>
+  
 </html>

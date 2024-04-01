@@ -98,4 +98,34 @@
 </div>
 </div>
 </body>
-<html
+<script>
+  $(document).ready(function() {
+    // Function to handle form submission
+    $('#edit-employee-form').submit(function(event) {
+      // Prevent the default form submission
+      event.preventDefault();
+
+      // Get the form data
+      var formData = {
+        name: $('#employee-name').val(),
+        jobTitle: $('#employee-job-title').val(),
+        departmentId: $('#employee-department-id').val(),
+        email: $('#employee-email').val(),
+        phoneNumber: $('#employee-phone-number').val(),
+        hireDate: $('#employee-hire-date').val(),
+        salary: $('#employee-salary').val(),
+        password: $('#employee-password').val()
+      };
+
+      // Save the form data into localStorage
+      localStorage.setItem('newEmployeeData', JSON.stringify(formData));
+
+      // Optionally, you can display a message to indicate successful submission
+      console.log('Employee data saved successfully:', formData);
+    });
+  });
+</script>
+
+
+
+</html>

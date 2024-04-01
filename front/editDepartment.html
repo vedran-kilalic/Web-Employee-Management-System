@@ -78,4 +78,69 @@
 </div>
 </div>
 </body>
+<script>
+$(document).ready(function() {
+  // Function to update department data in localStorage
+  function updateDepartmentData(updatedName, updatedDescription, updatedManager) {
+    // Retrieve department data from localStorage
+    var departments = JSON.parse(localStorage.getItem("departments")) || [];
+
+    // Find the index of the department to update
+    var index = departments.findIndex(function(department) {
+      return department.name === updatedName;
+    });
+
+    // If the department exists, update its data
+    if (index !== -1) {
+      departments[index].description = updatedDescription;
+      departments[index].manager = updatedManager;
+
+      // Update localStorage with the modified departments array
+      localStorage.setItem("departments", JSON.stringify(departments));
+    }
+  }
+
+  // Function to delete department data from localStorage
+  function deleteDepartmentData(departmentName) {
+    // Retrieve department data from localStorage
+    var departments = JSON.parse(localStorage.getItem("departments")) || [];
+
+    // Filter out the department to delete
+    var updatedDepartments = departments.filter(function(department) {
+      return department.name !== departmentName;
+    });
+
+    // Update localStorage with the modified departments array
+    localStorage.setItem("departments", JSON.stringify(updatedDepartments));
+  }
+
+  // Event listener for form submission
+  $("#edit-department-form").submit(function(event) {
+    event.preventDefault(); // Prevent default form submission
+
+    // Retrieve updated data from form fields
+    var updatedName = $("#department-name").val();
+    var updatedDescription = $("#department-description").val();
+    var updatedManager = $("#department-manager").val();
+
+    // Update department data in localStorage
+    updateDepartmentData(updatedName, updatedDescription, updatedManager);
+
+    // Redirect to departments.html
+    window.location.href = "departments.html";
+  });
+
+  // Event listener for delete button
+  $("#delete-department-btn").click(function() {
+    // Retrieve department name from localStorage
+    var departmentName = $("#department-name").val();
+
+    // Delete department data from localStorage
+    deleteDepartmentData(departmentName);
+
+    // Redirect to departments.html
+    window.location.href = "departments.html";
+  });
+});
+</script>
 </html>

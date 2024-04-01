@@ -72,8 +72,59 @@
     </thead>
     <tbody id="department-table-body"></tbody>
   </table>
+ <!-- Edit button -->
+<br>
+<br>
+<a href="editDepartment.html" id="search-button">Edit</a>
+
 </div>
 
 </div>
 </body>
+
+<script>
+$(document).ready(function(){
+    function fetchDepartments() {
+        $.ajax({
+            url: './dataTxt/department.txt', 
+            type: 'GET',
+            dataType: 'text',
+            success: function(data) {
+                var lines = data.split('\n');
+                var tableBody = $('#department-table-body');
+
+                for (var i = 0; i < lines.length; i++) {
+                    var line = lines[i].split(',');
+                    var newRow = '<tr>';
+                    for (var j = 0; j < line.length; j++) {
+                        newRow += '<td>' + line[j] + '</td>';
+                    }
+                    newRow += '</tr>';
+                    tableBody.append(newRow);
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('Error fetching department data:', error);
+            }
+        });
+    }
+
+    fetchDepartments();
+
+    $('#search-button').click(function() {
+        var searchTerm = $('#search-input').val().trim().toLowerCase();
+        var rows = $('#department-table-body tr');
+
+        rows.each(function() {
+            var name = $(this).find('td:nth-child(2)').text().toLowerCase();
+            if (name.indexOf(searchTerm) === -1) {
+                $(this).hide();
+            } else {
+                $(this).show();
+            }
+        });
+    });
+});
+
+</script>
 </html>

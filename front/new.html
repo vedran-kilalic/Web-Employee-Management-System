@@ -56,9 +56,26 @@
 
 <div class="wrap-all-the-things">
 <div class="container">
-<button class="newBtn">New Employee</button>
-<button class="newBtn">New Department</button>
+  <button class="newBtn" onclick="window.location.href = 'newEmployee.html'">New Employee</button>
+  <button class="newBtn" onclick="window.location.href = 'newDepartment.html'">New Department</button>
 </div>
 </div>
 </body>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+  // Get the two buttons
+  const newEmployeeBtn = document.querySelector('.newBtn:nth-child(1)');
+  const newDepartmentBtn = document.querySelector('.newBtn:nth-child(2)');
+
+  // Add click event listeners to the buttons
+  newEmployeeBtn.addEventListener('click', function() {
+    window.location.href = 'newEmployee.html';
+  });
+
+  newDepartmentBtn.addEventListener('click', function() {
+    window.location.href = 'newDepartment.html';
+  });
+});
+
+</script>
 </html>

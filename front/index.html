@@ -64,7 +64,7 @@
 </div>
 
   <table class="employee-table">
-    <thead>
+    <thead> 
       <tr>
         <th>ID</th>
         <th>Name</th>
@@ -84,4 +84,49 @@
 </div>
 	
 </body>
+<script>
+   $(document).ready(function() {
+    // AJAX request to read data from employee.txt
+    $.ajax({
+      url: './dataTxt/employee.txt',
+      dataType: 'text',
+      type: 'GET',
+      success: function(data) {
+        // Split the data into rows based on newline character
+        var rows = data.split('\n');
+        
+        // Iterate over each row
+        rows.forEach(function(row) {
+          // Split row into columns based on comma
+          var columns = row.split(',');
+          
+          // Append a new row to the table body
+          $('#employee-table-body').append('<tr>' +
+            '<td>' + columns[0] + '</td>' +
+            '<td>' + columns[1] + '</td>' +
+            '<td>' + columns[2] + '</td>' +
+            '<td>' + columns[3] + '</td>' +
+            '<td>' + columns[4] + '</td>' +
+            '<td>' + columns[5] + '</td>' +
+            '<td>' + columns[6] + '</td>' +
+            '<td>' + columns[7] + '</td>' +
+            '</tr>');
+        });
+      }
+    });
+  });
+  $('#search-button').click(function() {
+        var searchTerm = $('#search-input').val().trim().toLowerCase();
+        var rows = $('#employee-table-body tr');
+
+        rows.each(function() {
+            var name = $(this).find('td:nth-child(2)').text().toLowerCase();
+            if (name.indexOf(searchTerm) === -1) {
+                $(this).hide();
+            } else {
+                $(this).show();
+            }
+        });
+    });
+</script>
 </html>

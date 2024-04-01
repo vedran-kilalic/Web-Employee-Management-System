@@ -33,7 +33,7 @@
               </svg><span>Departments</span></a>
           </li>
           <li>
-            <a href="new.html">
+            <a href="img7new.html">
               <svg class="paper-airplane">
                 <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#paper-airplane"></use>
               </svg><span>Create</span></a>
@@ -63,7 +63,7 @@
       <label for="employee-name">Name:</label>
       <input type="text" id="employee-name">
     </div>
-    <div class="form-container">
+    <div >
       <label for="employee-job-title">Job Title:</label>
       <input type="text" id="employee-job-title">
     </div>
@@ -95,4 +95,38 @@
 </div>
 </div>
 </body>
+<script>
+  $(document).ready(function() {
+      // Function to handle form submission
+      $("#edit-employee-form").submit(function(event) {
+          event.preventDefault(); // Prevent the default form submission
+          
+          // Get form data
+          var formData = {
+              name: $("#employee-name").val(),
+              jobTitle: $("#employee-job-title").val(),
+              department: $("#employee-department-id").val(),
+              email: $("#employee-email").val(),
+              phoneNumber: $("#employee-phone-number").val(),
+              hireDate: $("#employee-hire-date").val(),
+              salary: $("#employee-salary").val()
+          };
+  
+          // Save form data to localStorage
+          localStorage.setItem("employeeData", JSON.stringify(formData));
+          
+          // Optionally, you can redirect the user to another page
+          window.location.href = "editEmployee.html"; // Redirect to editDepartment.html
+      });
+  
+      // Function to handle delete button click
+      $("#delete-employee-btn").click(function() {
+          // Remove data from localStorage
+          localStorage.removeItem("employeeData");
+          
+          // Optionally, you can redirect the user to another page
+          window.location.href = "index.html"; // Redirect to index.html
+      });
+  });
+  </script>
 </html>

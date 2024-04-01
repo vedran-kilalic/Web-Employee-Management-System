@@ -39,7 +39,7 @@
               </svg><span>Create</span></a>
           </li>
           <li>
-            <a href="logout.html">
+            <a href="login.html">
               <svg class="logout-icon">
                 <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#logout"></use>
               </svg><span>Logout</span></a>
@@ -77,4 +77,30 @@
 </div>
 </div>
 </body>
+<script>
+  $(document).ready(function(){
+      $.ajax({
+          type: "GET",
+          url: "./dataTxt/attendance.txt", // Specify the path to your text file here
+          dataType: "text",
+          success: function(data) {
+              processData(data);
+          }
+      });
+
+      function processData(allText) {
+          var allRows = allText.split('\n');
+          var tableBody = $('#attendance-table-body');
+          for (var i = 0; i < allRows.length; i++) {
+              var row = allRows[i].split(',');
+              var newRow = $('<tr>');
+              for (var j = 0; j < row.length; j++) {
+                  newRow.append('<td>' + row[j] + '</td>');
+              }
+              tableBody.append(newRow);
+          }
+      }
+  });
+</script>
+
 </html>

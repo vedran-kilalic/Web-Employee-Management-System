@@ -78,4 +78,50 @@
 </div>
 </div>
 </body>
+<script>
+  $(document).ready(function() {
+      // Load department data from localStorage
+      var departmentData = JSON.parse(localStorage.getItem('departmentData')) || {};
+  
+      // Function to save department data
+      function saveDepartmentData() {
+          var name = $('#department-name').val();
+          var description = $('#department-description').val();
+          var manager = $('#department-manager').val();
+          departmentData = { name: name, description: description, manager: manager };
+          localStorage.setItem('departmentData', JSON.stringify(departmentData));
+          console.log('Department data saved:', departmentData);
+      }
+  
+      // Function to delete department data
+      function deleteDepartmentData() {
+          localStorage.removeItem('departmentData');
+          $('#department-name').val('');
+          $('#department-description').val('');
+          $('#department-manager').val('');
+          console.log('Department data deleted');
+      }
+  
+      // Event listener for form submission
+      $('#edit-department-form').submit(function(event) {
+          event.preventDefault();
+          saveDepartmentData();
+      });
+  
+      // Event listener for delete button
+      $('#delete-department-btn').click(function() {
+          if (confirm('Are you sure you want to delete this department?')) {
+              deleteDepartmentData();
+          }
+      });
+  
+      // Populate form fields if department data exists in localStorage
+      if (departmentData) {
+          $('#department-name').val(departmentData.name);
+          $('#department-description').val(departmentData.description);
+          $('#department-manager').val(departmentData.manager);
+      }
+  });
+  </script>
+
 </html>
