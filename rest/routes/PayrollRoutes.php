@@ -8,7 +8,7 @@ Flight::route('GET /payrollById/@id', function($id){
 });
 
 
-Flight::route('GET /payroll/by_name/@name', function($name){
+Flight::route('GET /payroll/by_employee_id/@employee_id', function($employee_id){
     Flight::json(Flight::payrollService()->get_payroll_by_name($name));
 });
 
