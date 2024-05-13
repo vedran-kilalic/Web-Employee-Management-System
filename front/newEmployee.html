@@ -88,7 +88,7 @@
       <input type="text" id="employee-salary">
     </div>
     <div class="form-container">
-      <label for="employee-salary">Password:</label>
+      <label for="employee-password">Password:</label>
       <input type="password" id="employee-password">
     </div>
     <div>
@@ -99,32 +99,56 @@
 </div>
 </body>
 <script>
-  $(document).ready(function() {
-    // Function to handle form submission
-    $('#edit-employee-form').submit(function(event) {
-      // Prevent the default form submission
-      event.preventDefault();
+// Function to handle form submission
+// Function to handle form submission
+const submitForm = event => {
+  event.preventDefault();
 
-      var formData = {
-        name: $('#employee-name').val(),
-        jobTitle: $('#employee-job-title').val(),
-        departmentId: $('#employee-department-id').val(),
-        email: $('#employee-email').val(),
-        phoneNumber: $('#employee-phone-number').val(),
-        hireDate: $('#employee-hire-date').val(),
-        salary: $('#employee-salary').val(),
-        password: $('#employee-password').val()
-      };
+  // Get the employee data from the form
+  const employeeData = {
+    name: document.getElementById('employee-name').value,
+    jobTitle: document.getElementById('employee-job-title').value,
+    departmentId: document.getElementById('employee-department-id').value,
+    email: document.getElementById('employee-email').value,
+    phoneNumber: document.getElementById('employee-phone-number').value,
+    hireDate: document.getElementById('employee-hire-date').value,
+    salary: document.getElementById('employee-salary').value,
+    admin: false,
+    password: document.getElementById('employee-password').value
+  };
 
-      // Save the form data into localStorage
-      localStorage.setItem('newEmployeeData', JSON.stringify(formData));
+  // Create the registration request object
+  const registrationRequest = {
+    employee: employeeData
+  };
 
-      // Optionally, you can display a message to indicate successful submission
-      console.log('Employee data saved successfully:', formData);
+  // Send the registration request to the server as JSON
+  fetch('http://localhost/Web-Employee-Management-System/rest/employees', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(registrationRequest)
+  })
+    .then(response => {
+      if (response.ok) {
+        // Employee registered successfully, redirect to another page or perform any desired action
+        console.log('Employee registered successfully');
+        window.location.href = 'index.html';
+      } else {
+        // Failed to register employee, display an error message
+        console.error('Error:', response.statusText);
+        alert('Failed to register employee');
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      alert('Failed to register employee');
     });
-  });
+};
+
+document.getElementById('edit-employee-form').addEventListener('submit', submitForm);
+
+
 </script>
-
-
-
 </html>

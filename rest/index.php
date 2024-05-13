@@ -14,6 +14,12 @@ Flight::register('payrollService', 'PayrollService');
 Flight::register('departmentService', 'DepartmentService');
 Flight::register('employeeService', 'EmployeeService');
 
+Flight::route('GET /docs.json', function(){
+  $openapi = \OpenApi\scan('routes');
+  header('Content-Type: application/json');
+  echo $openapi->toJson();
+});
+
 require_once __DIR__.'/routes/AttendanceRoutes.php';
 require_once __DIR__.'/routes/DepartmentRoutes.php';
 require_once __DIR__.'/routes/PayrollRoutes.php';
