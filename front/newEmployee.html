@@ -88,7 +88,7 @@
       <input type="text" id="employee-salary">
     </div>
     <div class="form-container">
-      <label for="employee-salary">Password:</label>
+      <label for="employee-password">Password:</label>
       <input type="password" id="employee-password">
     </div>
     <div>
@@ -98,4 +98,57 @@
 </div>
 </div>
 </body>
-<html
+<script>
+// Function to handle form submission
+// Function to handle form submission
+const submitForm = event => {
+  event.preventDefault();
+
+  // Get the employee data from the form
+  const employeeData = {
+    name: document.getElementById('employee-name').value,
+    jobTitle: document.getElementById('employee-job-title').value,
+    departmentId: document.getElementById('employee-department-id').value,
+    email: document.getElementById('employee-email').value,
+    phoneNumber: document.getElementById('employee-phone-number').value,
+    hireDate: document.getElementById('employee-hire-date').value,
+    salary: document.getElementById('employee-salary').value,
+    admin: false,
+    password: document.getElementById('employee-password').value
+  };
+
+  // Create the registration request object
+  const registrationRequest = {
+    employee: employeeData
+  };
+
+  // Send the registration request to the server as JSON
+  fetch('http://localhost/Web-Employee-Management-System/rest/employees', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(registrationRequest)
+  })
+    .then(response => {
+      if (response.ok) {
+        // Employee registered successfully, redirect to another page or perform any desired action
+        console.log('Employee registered successfully');
+        window.location.href = 'index.html';
+      } else {
+        // Failed to register employee, display an error message
+        console.error('Error:', response.statusText);
+        alert('Failed to register employee');
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      alert('Failed to register employee');
+    });
+};
+
+document.getElementById('edit-employee-form').addEventListener('submit', submitForm);
+
+
+</script>
+</html>

@@ -60,4 +60,43 @@
     </div>
   </div>
 </section>
+<script>
+  // Show registration form when register button is clicked
+  $('.switcher-signup').click(function() {
+    $('.form-wrapper').toggleClass('is-active');
+  });
+
+  // Show login form when login button is clicked
+  $('.switcher-login').click(function() {
+    $('.form-wrapper').toggleClass('is-active');
+  });
+
+  // Login form submit event
+  $('#login-form').submit(function(event) {
+    event.preventDefault();
+    const email = $('#login-email').val();
+    const password = $('#login-password').val();
+
+    // Save login data to local storage
+    const loginData = { email: email, password: password };
+    localStorage.setItem('loginData', JSON.stringify(loginData));
+    console.log('Login data saved to local storage:', loginData);
+  });
+
+  // Registration form submit event
+  $('#signup-form').submit(function(event) {
+    event.preventDefault();
+    const name = $('#signup-name').val();
+    const surname = $('#signup-surname').val();
+    const email = $('#signup-email').val();
+    const password = $('#signup-password').val();
+    const phone = $('#signup-phone').val();
+
+    // Save registration data to local storage
+    const registrationData = { name: name, surname: surname, email: email, password: password, phone: phone };
+    localStorage.setItem('registrationData', JSON.stringify(registrationData));
+    console.log('Registration data saved to local storage:', registrationData);
+  });
+</script>
+
 </html>

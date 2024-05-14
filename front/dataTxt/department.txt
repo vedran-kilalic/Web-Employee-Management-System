@@ -1,0 +1,5 @@
+1,Engineering,Responsible for product development,101
+2,Sales,Sales and marketing department,102
+3,Human Resources,Handles employee recruitment and management,103
+4,Finance,Manages financial transactions and reporting,104
+5,Operations,Oversees day-to-day business operations,105
