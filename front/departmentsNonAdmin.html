@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Employee</title>
+    <title>Document</title>
      <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
@@ -15,34 +15,22 @@
        <nav class="head-nav">
         <ul class="menu">
           <li>
-            <a href="profile.html">
+            <a href="profileNonAdmin.html">
               <svg class="person">
                 <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#person"></use>
               </svg><span>My Profile</span></a>
           </li>
           <li>
-            <a href="index.html">
+            <a href="indexNonAdmin.html">
               <svg class="video-player">
                 <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#video-player"></use>
-              </svg><span>Employees</span></a>
+              </svg><span>Work Table</span></a>
           </li>
           <li>
-            <a href="departments.html">
+            <a href="departmentsNonAdmin.html">
               <svg class="speech-bubble">
                 <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#speech-bubble"></use>
               </svg><span>Departments</span></a>
-          </li>
-          <li>
-            <a href="new.html">
-              <svg class="paper-airplane">
-                <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#paper-airplane"></use>
-              </svg><span>Create</span></a>
-          </li>
-        <li>
-            <a href="attendance.html">
-              <svg class="share">
-                <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#share"></use>
-              </svg><span>Attendance</span></a>
           </li>
           <li>
              <a href="login.html" id="logout-link">
@@ -52,135 +40,89 @@
           </li>
         </ul>
       </nav>
-</header> <!-- //main-head -->
+</header> 
 
 <div class="wrap-all-the-things">
-<div class="container" id = "editDiv">
-    <h1>Edit Employee</h1>
+<div class="table-container" style="text-align: center;">
+  <div class="search-container">
+    <input type="text" id="search-input" placeholder="Search by department name">
+    <button id="search-button">Search</button>
+  </div>
 
-  <form id="edit-employee-form">
-    <div class="form-container">
-      <label for="employee-name">Name:</label>
-      <input type="text" id="employee-name">
-    </div>
-    <div class="form-container">
-      <label for="employee-job-title">Job Title:</label>
-      <input type="text" id="employee-job-title">
-    </div>
-    <div class="form-container">
-      <label for="employee-department-id">Department:</label>
-      <input type="text" id="employee-department-id">
-    </div>
-    <div class="form-container">
-      <label for="employee-email">Email:</label>
-      <input type="text" id="employee-email">
-    </div>
-    <div class="form-container">
-      <label for="employee-phone-number">Phone Number:</label>
-      <input type="text" id="employee-phone-number">
-    </div>
-    <div class="form-container">
-      <label for="employee-hire-date">Hire Date:</label>
-      <input type="text" id="employee-hire-date">
-    </div>
-    <div class="form-container">
-      <label for="employee-salary">Salary:</label>
-      <input type="text" id="employee-salary">
-    </div>
-    <div>
-      <button type="submit" class="btnEdit" style="float: left; margin-left: 70px;">Edit</button>
-      <button id="delete-employee-btn" class="btnEdit" style="float: right;">Delete</button>
-    </div>
-  </form>
+  <table class="employee-table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Description</th>
+        <th>Manager ID</th>
+      </tr>
+    </thead>
+    <tbody id="department-table-body"></tbody>
+  </table>
 </div>
+
 </div>
 </body>
 <script>
-  // Get the employee ID from the query parameter
-  const urlParams = new URLSearchParams(window.location.search);
-  const employeeId = urlParams.get('id');
-
-  // Fetch the employee data from the server
-  fetch(`http://localhost:80/Web-Employee-Management-System/rest/employees/by_id/${employeeId}`)
+  // Fetch department data from the API
+  fetch('http://localhost:80/Web-Employee-Management-System/rest/departments')
     .then(response => response.json())
-    .then(employeeData => {
-      // Populate the input fields with the employee data
-      document.getElementById('employee-name').value = employeeData.employee_name;
-      document.getElementById('employee-job-title').value = employeeData.job_title;
-      document.getElementById('employee-department-id').value = employeeData.department_id;
-      document.getElementById('employee-email').value = employeeData.email;
-      document.getElementById('employee-phone-number').value = employeeData.phone_number;
-      document.getElementById('employee-hire-date').value = employeeData.hire_date;
-      document.getElementById('employee-salary').value = employeeData.salary;
+    .then(data => {
+      const departmentTableBody = document.getElementById('department-table-body');
+      const searchInput = document.getElementById('search-input');
+      const searchButton = document.getElementById('search-button');
+
+      const filterDepartments = searchTerm => {
+        const filteredDepartments = data.filter(department =>
+          department.name.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+        displayDepartments(filteredDepartments);
+      };
+
+      // Function to display the department data in the table
+      const displayDepartments = departments => {
+        departmentTableBody.innerHTML = '';
+
+        departments.forEach(department => {
+          const row = document.createElement('tr');
+
+          row.innerHTML = `
+            <td>${department.id}</td>
+            <td>${department.name}</td>
+            <td>${department.description}</td>
+            <td>${department.manager}</td>
+          `;
+
+          departmentTableBody.appendChild(row);
+        });
+
+        const editButtons = document.querySelectorAll('.btnEdit');
+        editButtons.forEach(button => {
+          button.addEventListener('click', () => {
+            const departmentId = button.dataset.departmentId;
+            editDepartment(departmentId);
+          });
+        });
+      };
+
+      // Display all departments initially
+      displayDepartments(data);
+
+      // Event listener for the search button click
+      searchButton.addEventListener('click', () => {
+        const searchTerm = searchInput.value.trim();
+        filterDepartments(searchTerm);
+      });
     })
     .catch(error => {
       console.error('Error:', error);
     });
 
-  // Function to handle form submission
-  const submitForm = event => {
-    event.preventDefault();
-
-    // Get the updated employee data from the form
-    const updatedEmployee = {
-      employee_name: document.getElementById('employee-name').value,
-      job_title: document.getElementById('employee-job-title').value,
-      department_id: document.getElementById('employee-department-id').value,
-      email: document.getElementById('employee-email').value,
-      phone_number: document.getElementById('employee-phone-number').value,
-      hire_date: document.getElementById('employee-hire-date').value,
-      salary: document.getElementById('employee-salary').value
-    };
-
-    // Send the updated employee data to the server using Ajax
-    fetch(`http://localhost:80/Web-Employee-Management-System/rest/employees/update/${employeeId}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(updatedEmployee)
-    })
-      .then(response => {
-        if (response.ok) {
-          // Employee updated successfully, redirect to another page or perform any desired action
-          window.location.href = 'index.html';
-        } else {
-          throw new Error('Failed to update employee');
-        }
-      })
-      .catch(error => {
-        console.error('Error:', error);
-      });
+  const editDepartment = departmentId => {
+    window.location.href = `editDepartment.html?id=${departmentId}`;
   };
 
-  // Function to handle delete button click
-  const deleteEmployee = () => {
-      if (confirm('Are you sure you want to delete this employee?')) {
-          fetch(`http://localhost:80/Web-Employee-Management-System/rest/employees/deleteEmployee/${employeeId}`, {
-              method: 'DELETE'
-          })
-              .then(response => {
-                  if (response.ok) {
-                      // Employee deleted successfully, redirect to another page or perform any desired action
-                      window.location.href = 'index.html.html';
-                  } else {
-                      throw new Error('Failed to delete employee');
-                  }
-              })
-              .catch(error => {
-                  console.error('Error:', error);
-                  alert('An error occurred while deleting employee');
-              });
-      }
-  };
-
-
-  // Add a submit event listener to the form
-  document.getElementById('edit-employee-form').addEventListener('submit', submitForm);
-
-  // Add a click event listener to the delete button
-  document.getElementById('delete-employee-btn').addEventListener('click', deleteEmployee);
-  
   // Logout link event listener
 document.getElementById('logout-link').addEventListener('click', function(event) {
   event.preventDefault();
@@ -217,7 +159,5 @@ document.getElementById('logout-link').addEventListener('click', function(event)
   return null;
 }
 </script>
-
-
 
 </html>
