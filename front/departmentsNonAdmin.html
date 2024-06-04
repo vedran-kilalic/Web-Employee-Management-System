@@ -15,30 +15,24 @@
        <nav class="head-nav">
         <ul class="menu">
           <li>
-            <a href="profile.html">
+            <a href="profileNonAdmin.html">
               <svg class="person">
                 <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#person"></use>
               </svg><span>My Profile</span></a>
           </li>
           <li>
-            <a href="index.html">
+            <a href="indexNonAdmin.html">
               <svg class="video-player">
                 <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#video-player"></use>
-              </svg><span>Employees</span></a>
+              </svg><span>Work Table</span></a>
           </li>
           <li>
-            <a href="departments.html">
+            <a href="departmentsNonAdmin.html">
               <svg class="speech-bubble">
                 <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#speech-bubble"></use>
               </svg><span>Departments</span></a>
           </li>
           <li>
-            <a href="new.html">
-              <svg class="paper-airplane">
-                <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#paper-airplane"></use>
-              </svg><span>Create</span></a>
-          </li>
-       <li>
              <a href="login.html" id="logout-link">
               <svg>
                 <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="logout"></use>
@@ -50,99 +44,84 @@
 
 <div class="wrap-all-the-things">
 <div class="table-container" style="text-align: center;">
-
-    <button class="statusBtn" style="background-color: limegreen;" onclick="updateStatus('green')">Online</button>
-    <button class="statusBtn" style="background-color: red;" onclick="updateStatus('red')">Away</button>
-
-      <div class="search-container">
-    <input type="text" id="search-input" placeholder="Search by employee id">
+  <div class="search-container">
+    <input type="text" id="search-input" placeholder="Search by department name">
     <button id="search-button">Search</button>
   </div>
-<table class="employee-table">
-  <thead>
-    <tr>
-      <th>ID</th>
-      <th>Employee ID</th>
-      <th>Date</th>
-      <th>Time In</th>
-      <th>Time Out</th>
-      <th>Status</th>
-    </tr>
-  </thead>
-  <tbody id="attendance-table-body">
-    <!-- Attendance records will be dynamically added here -->
-    
-  </tbody>
-</table>
+
+  <table class="employee-table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Description</th>
+        <th>Manager ID</th>
+      </tr>
+    </thead>
+    <tbody id="department-table-body"></tbody>
+  </table>
 </div>
+
 </div>
 </body>
 <script>
-  // Fetch attendance data from the server and populate the table
-  function fetchAttendanceData() {
-    fetch('https://seashell-app-mh569.ondigitalocean.app/rest/attendance')
-      .then(response => response.json())
-      .then(attendanceData => {
-        const tableBody = document.getElementById('attendance-table-body');
-        tableBody.innerHTML = ''; // Clear existing table rows
-        console.log(attendanceData)
-        // Iterate over the attendance records and create table rows
-        attendanceData.forEach(attendance => {
+  // Fetch department data from the API
+  fetch('https://seashell-app-mh569.ondigitalocean.app/rest/departments')
+    .then(response => response.json())
+    .then(data => {
+      const departmentTableBody = document.getElementById('department-table-body');
+      const searchInput = document.getElementById('search-input');
+      const searchButton = document.getElementById('search-button');
+
+      const filterDepartments = searchTerm => {
+        const filteredDepartments = data.filter(department =>
+          department.name.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+        displayDepartments(filteredDepartments);
+      };
+
+      // Function to display the department data in the table
+      const displayDepartments = departments => {
+        departmentTableBody.innerHTML = '';
+
+        departments.forEach(department => {
           const row = document.createElement('tr');
+
           row.innerHTML = `
-            <td>${attendance.id}</td>
-            <td>${attendance.employee_id}</td>
-            <td>${attendance.date}</td>
-            <td>${attendance.time_in}</td>
-            <td>${attendance.time_out}</td>
-            <td><span class="status-circle ${attendance.status === 'green' ? 'green' : 'red'}"></span></td>
+            <td>${department.id}</td>
+            <td>${department.name}</td>
+            <td>${department.description}</td>
+            <td>${department.manager}</td>
           `;
-          tableBody.appendChild(row);
+
+          departmentTableBody.appendChild(row);
         });
-      })
-      .catch(error => {
-        console.error('Error:', error);
+
+        const editButtons = document.querySelectorAll('.btnEdit');
+        editButtons.forEach(button => {
+          button.addEventListener('click', () => {
+            const departmentId = button.dataset.departmentId;
+            editDepartment(departmentId);
+          });
+        });
+      };
+
+      // Display all departments initially
+      displayDepartments(data);
+
+      // Event listener for the search button click
+      searchButton.addEventListener('click', () => {
+        const searchTerm = searchInput.value.trim();
+        filterDepartments(searchTerm);
       });
-  }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+    });
 
-  // Search button event listener
-  const searchButton = document.getElementById('search-button');
-  searchButton.addEventListener('click', () => {
-    const searchInput = document.getElementById('search-input');
-    const searchValue = searchInput.value.trim();
-
-    // Fetch attendance data from the server and filter based on employee ID
-    fetch('https://seashell-app-mh569.ondigitalocean.app/rest/attendance')
-      .then(response => response.json())
-      .then(attendanceData => {
-        const filteredData = attendanceData.filter(attendance => {
-          return attendance.employee_id.toString().includes(searchValue);
-        });
-
-        const tableBody = document.getElementById('attendance-table-body');
-        tableBody.innerHTML = ''; // Clear existing table rows
-
-        // Iterate over the filtered attendance records and create table rows
-        filteredData.forEach(attendance => {
-          const row = document.createElement('tr');
-          row.innerHTML = `
-            <td>${attendance.id}</td>
-            <td>${attendance.employee_id}</td>
-            <td>${attendance.date}</td>
-            <td>${attendance.time_in}</td>
-            <td>${attendance.time_out}</td>
-            <td><span class="status-circle ${attendance.status === 'green' ? 'green' : 'red'}"></span></td>
-          `;
-          tableBody.appendChild(row);
-        });
-      })
-      .catch(error => {
-        console.error('Error:', error);
-      });
-  });
-
-  // Initial fetch to populate the table
-  fetchAttendanceData();
+  const editDepartment = departmentId => {
+    window.location.href = `editDepartment.html?id=${departmentId}`;
+  };
 
   // Logout link event listener
 document.getElementById('logout-link').addEventListener('click', function(event) {
@@ -179,26 +158,6 @@ document.getElementById('logout-link').addEventListener('click', function(event)
 
   return null;
 }
-
-
-function updateStatus() {
-  const employeeId = getCookie('employeeId');
-            // Make AJAX call to update attendance status
-            var xhr = new XMLHttpRequest();
-            xhr.open('PUT', 'https://seashell-app-mh569.ondigitalocean.app/rest/attendance/updateStatus/' + employeeId);
-            xhr.setRequestHeader('Content-Type', 'text/plain');
-            xhr.onload = function() {
-                if (xhr.status === 200) {
-                    alert('Status updated successfully');
-                    location.reload();
-                } else {
-                    alert('Failed to update status');
-                }
-            };
-            xhr.onerror = function() {
-                alert('Network error');
-            };
-            xhr.send();
-        }
 </script>
+
 </html>

@@ -1,12 +1,31 @@
 <?php
    
+   if (isset($_SERVER['HTTP_ORIGIN'])) {
+    header("Access-Control-Allow-Origin: *");
+    header('Access-Control-Allow-Credentials: true');
+    header('Access-Control-Max-Age: 86400');    // cache for 1 day
+}
 
-header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
-header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept, Authorization");
-header("Access-Control-Allow-Credentials: true");
-header("Access-Control-Max-Age: 86400");
 
+if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+
+    if (isset($_SERVER['HTTP_ACCESS_CONTROL_REQUEST_METHOD']))
+        header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");         
+
+    if (isset($_SERVER['HTTP_ACCESS_CONTROL_REQUEST_HEADERS']))
+        header("Access-Control-Allow-Headers: {$_SERVER['HTTP_ACCESS_CONTROL_REQUEST_HEADERS']}");
+
+    exit(0);
+}
+
+
+// Handle your POST request here
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    // Handle POST request and send response
+    // Example:
+    //$response = array('status' => 'success');
+    //echo json_encode($response);
+}
 
     require_once __DIR__ . '/../services/EmployeeService.class.php';
 
@@ -41,7 +60,7 @@ Flight::route('GET /employees', function(){
      *      @OA\Parameter(@OA\Schema(type="number"), in="path", name="employee_id", example="1", description="EMPLOYEE ID")
      * )
      */
-Flight::route('GET /employees/@id', function($id){
+Flight::route('GET /employees/by_id/@id', function($id){
     Flight::json(Flight::employeeService()->get_employee_by_id($id));
 });
 
@@ -49,6 +68,76 @@ Flight::route('GET /employees/@id', function($id){
 Flight::route('GET /employees/by_name/@name', function($name){
     Flight::json(Flight::employeeService()->get_employee_by_name($name));
 });
+
+
+Flight::route('POST /user/by_email', function() {
+    $request = Flight::request();
+    $data = $request->data->getData();
+
+    if (empty($data['email'])) {
+        Flight::json(array('message' => 'Email is required'), 400);
+        return;
+    }
+
+    $email = $data['email'];
+    $employeeService =  Flight::get('employee_service');
+    $employee = $employeeService->get_employee_by_email($email);
+
+    if ($employee === false) {
+        // Return a not found response if no employee is found
+        Flight::json(array('message' => 'Employee not found'), 404);
+    } else {
+        // Return the employee as a success response
+        Flight::json($employee, 200);
+    }
+});
+
+
+
+Flight::route('POST /login', function() {
+    $data = Flight::request()->data->getData();
+    $email = $data['email'];
+    $password = $data['password'];
+
+    $employeeService = Flight::get('employee_service');
+    $employee = $employeeService->get_employee_by_email($email);
+
+    if ($employee && $employeeService->check_password($employee['id'], $password)) {
+        $jwt_payload = [
+            'user' => $employee,
+            'iat' => time(),
+            'exp' => time() + (60 * 60 * 24) // valid for day
+        ];
+
+        $token = JWT::encode(
+            $jwt_payload,
+            Config::JWT_SECRET(),
+            'HS256'
+        );
+
+        Flight::json(array_merge($employee, ['token' => $token])
+        );
+    } else {
+        Flight::json(["message" => "Invalid email or password"], 401);
+    }
+});
+Flight::route('POST /logout', function() {
+    try {
+        $token = Flight::request()->getHeader("Authentication");
+        if(!$token)
+            Flight::halt(401, "Missing authentication header");
+
+        $decoded_token = JWT::decode($token, new Key(Config::JWT_SECRET(), 'HS256'));
+
+        Flight::json([
+            'jwt_decoded' => $decoded_token,
+            'user' => $decoded_token->user
+        ]);
+    } catch (\Exception $e) {
+        Flight::halt(401, $e->getMessage());
+    }
+});
+
 
     /**
      * @OA\Post(
@@ -76,9 +165,9 @@ Flight::route('GET /employees/by_name/@name', function($name){
      *      )
      * )
      */
-Flight::route('POST /employees', function(){
+Flight::route('POST /employees/add', function(){
     $data = Flight::request()->data->getData();
-    Flight::json(Flight::employeeService()->add($data));
+    Flight::json(Flight::employeeService()->add_employee($data));
     Flight::json(["message" => "created"]);
 });
 
@@ -121,7 +210,7 @@ Flight::route('POST /employees', function(){
  * )
  */
 
-Flight::route('PUT /employees/@id', function($id){
+Flight::route('PUT /employees/update/@id', function($id){
     $data = Flight::request()->data->getData();
     Flight::employeeService()->update($id, $data);  
     Flight::json(["message" => "updated"]);
@@ -141,7 +230,7 @@ Flight::route('PUT /employees/@id', function($id){
      * )
      */
 
-Flight::route('DELETE /employees/@id', function($id){
+Flight::route('DELETE /employees/deleteEmployee/@id', function($id){
     Flight::employeeService()->delete($id);
     Flight::json(["message" => "deleted"]);
 });

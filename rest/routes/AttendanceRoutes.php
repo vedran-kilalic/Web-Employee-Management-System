@@ -6,6 +6,9 @@ if (isset($_SERVER['HTTP_ORIGIN'])) {
     header('Access-Control-Max-Age: 86400'); 
 }
 
+
+Flight::set('attendance_service', new AttendanceService());
+
 /**
  * @OA\Get(
  *      path="/attendance",
@@ -20,6 +23,10 @@ if (isset($_SERVER['HTTP_ORIGIN'])) {
 
 Flight::route('GET /attendance', function(){
     Flight::json(Flight::attendanceService()->get_attendance());
+});
+
+Flight::route('GET /attendance/by_employee_id/@employee_id', function($employee_id){
+    Flight::json(Flight::attendanceService()->find_by_employee_id($employee_id));
 });
  /**
      * @OA\Get(
@@ -66,7 +73,7 @@ Flight::route('GET /attendance/by_status/@status', function($status){
      * )
      */
 
-Flight::route('POST /attendance', function(){
+Flight::route('POST /attendance/add', function(){
     $data = Flight::request()->data->getData();
     Flight::json(Flight::attendanceService()->add($data));
     Flight::json(["message" => "created"]);
@@ -161,5 +168,35 @@ Flight::route('DELETE /attendance/@id', function($id){
     Flight::attendanceService()->delete($id);
     Flight::json(["message" => "deleted"]);
 });
+
+Flight::route('PUT /attendance/updateStatus/@employee_id', function($employee_id) {
+    $data = Flight::attendanceService()->find_by_employee_id($employee_id);
+
+    $attendance_service = Flight::get('attendance_service');
+    // $attendance_list = $attendance_service->find_by_employee_id($employee_id);
+    $attendance_list = $data;
+    if (!empty($attendance_list)) {
+        foreach ($attendance_list as $attendance) {
+            if ($attendance['status'] == null || $attendance['status'] == 'red'){
+                $newStatus = 'green';
+                $attendance_service->update_status($attendance['id'], $newStatus);
+            } else {
+                $newStatus = 'red';
+                $attendance_service->update_status($attendance['id'], $newStatus);
+            }
+        }
+
+        Flight::json(["message" => "Status updated successfully"], 200);
+    } else {
+        Flight::json(["message" => "Attendance records not found"], 404);
+    }
+});
+
+Flight::route('PUT /attendance/updateTimeOut/@employeeId', function($employeeId){
+    $attendance_service = Flight::get('attendance_service');
+    Flight::attendanceService()->update_attendance_time_out($employeeId);
+    Flight::json(["message" => "updated"]);
+});
+
 
 ?>

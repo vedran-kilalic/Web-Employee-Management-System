@@ -24,6 +24,21 @@ class AttendanceDao extends BaseDao {
     return $this->query_unique("SELECT * FROM attendance WHERE status = :status", ["status" =>$status]);
     
   }
+  public function find_by_employee_id($employeeId) {
+    $query = "SELECT * FROM attendance WHERE employee_id = :employee_id";
+    return $this->query($query, ['employee_id' => $employeeId]);
+}
+
+public function update_status($attendanceId, $newStatus) {
+    $query = "UPDATE attendance SET status = :status WHERE id = :id";
+    return $this->query($query, ['status' => $newStatus, 'id' => $attendanceId]);
+}
+
+
+public function update_time_out($id, $time_out) {
+  $query = "UPDATE attendance SET time_out = :time_out WHERE id = :id";
+  return $this->query($query, ['id' => $id, 'time_out' => $time_out]);
+}
 
 }
 

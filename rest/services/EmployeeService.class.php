@@ -20,6 +20,23 @@ class EmployeeService extends BaseService
     public function get_employee_by_name($name){
         return $this->dao->get_employee_by_name($name);
     }
+    
+    public function add_employee($entity){
+        $entity['password'] = password_hash($entity['password'], PASSWORD_BCRYPT);
+        return $this->dao->add($entity);
+    }
+
+    public function get_employee_by_email($email){
+        return $this->dao->get_employee_by_email($email);
+    }
+
+    public function check_password($employee_id, $password) {
+        $employee = $this->dao->get_employee_id($employee_id);
+        if ($employee) {
+            return password_verify($password, $employee['password']);
+        }
+        return false;
+}
 }
 
 ?>

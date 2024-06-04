@@ -36,67 +36,97 @@
         <button type="submit" class="btn-login">Login</button>
       </form>
     </div>
-    <div class="form-wrapper">
-      <button type="button" class="switcher switcher-signup">
-        Register
-        <span class="underline"></span>
-      </button>
-      <form class="form form-signup">
-          <div class="input-block">
-            <label for="signup-email">Name</label>
-            <input id="signup-email" type="text" required>
-            <label for="signup-email">Surname</label>
-            <input id="signup-email" type="text" required>
-            <label for="signup-email">E-mail</label>
-            <input id="signup-email" type="email" required>
-            <label for="signup-email">Password</label>
-            <input id="signup-email" type="password" required>
-            <label for="signup-email">Phone</label>
-            <input id="signup-email" type="phone" required>
-            <button type="submit" class="btn-signup">Register</button>
-          </div>
-        </fieldset>
-      </form>
-    </div>
+    
   </div>
 </section>
 <script>
-  // Show registration form when register button is clicked
-  $('.switcher-signup').click(function() {
-    $('.form-wrapper').toggleClass('is-active');
-  });
+  const switchers = [...document.querySelectorAll('.switcher')]
 
-  // Show login form when login button is clicked
-  $('.switcher-login').click(function() {
-    $('.form-wrapper').toggleClass('is-active');
-  });
+switchers.forEach(item => {
+	item.addEventListener('click', function() {
+		switchers.forEach(item => item.parentElement.classList.remove('is-active'))
+		this.parentElement.classList.add('is-active')
+	})
+})
 
-  // Login form submit event
-  $('#login-form').submit(function(event) {
-    event.preventDefault();
-    const email = $('#login-email').val();
-    const password = $('#login-password').val();
 
-    // Save login data to local storage
-    const loginData = { email: email, password: password };
-    localStorage.setItem('loginData', JSON.stringify(loginData));
-    console.log('Login data saved to local storage:', loginData);
-  });
+  document.querySelector('#login-form').addEventListener('submit', function(event) {
+  event.preventDefault();
 
-  // Registration form submit event
-  $('#signup-form').submit(function(event) {
-    event.preventDefault();
-    const name = $('#signup-name').val();
-    const surname = $('#signup-surname').val();
-    const email = $('#signup-email').val();
-    const password = $('#signup-password').val();
-    const phone = $('#signup-phone').val();
+  var email = document.getElementById('login-email').value;
+  var password = document.getElementById('login-password').value;
 
-    // Save registration data to local storage
-    const registrationData = { name: name, surname: surname, email: email, password: password, phone: phone };
-    localStorage.setItem('registrationData', JSON.stringify(registrationData));
-    console.log('Registration data saved to local storage:', registrationData);
-  });
+  var xhr = new XMLHttpRequest();
+  xhr.open('POST', 'https://seashell-app-mh569.ondigitalocean.app/rest/user/by_email');
+  xhr.setRequestHeader('Content-Type', 'application/json');
+  xhr.onload = function() {
+    if (xhr.status === 200) {
+      var employee = JSON.parse(xhr.responseText);
+      var employeeId = employee.id;
+      var manager = employee.manager;
+
+      var loginXhr = new XMLHttpRequest();
+      loginXhr.open('POST', 'https://seashell-app-mh569.ondigitalocean.app/rest/login');
+      loginXhr.setRequestHeader('Content-Type', 'application/json');
+      loginXhr.onload = function() {
+        if (loginXhr.status === 200) {
+        var response = JSON.parse(loginXhr.responseText);
+        console.log(response);
+        var token = response.token
+        console.log(token)
+        localStorage.setItem('jwt_token', token);
+          document.cookie = 'employeeId=' + employeeId;
+
+          // Create a new attendance record
+          var newAttendance = {
+            employee_id: employeeId,
+            date: new Date().toISOString().slice(0, 10),
+            time_in: new Date().toISOString().slice(11, 19),
+            time_out: '00:00:00',
+            status: ''
+          };
+
+          var addAttendanceXhr = new XMLHttpRequest();
+          addAttendanceXhr.open('POST', 'http://localhost:80/Web-Employee-Management-System/rest/attendance/add');
+          addAttendanceXhr.setRequestHeader('Content-Type', 'application/json');
+          addAttendanceXhr.onload = function() {
+            if (addAttendanceXhr.status === 200) {
+              if (manager) {
+                window.location.href = 'index.html';
+              } else {
+                window.location.href = 'indexNonAdmin.html';
+              }
+            } else {
+              console.error('Error:', addAttendanceXhr.status);
+            }
+          };
+          addAttendanceXhr.send(JSON.stringify(newAttendance));
+        } else if (loginXhr.status === 401) {
+          alert('Invalid email or password');
+        } else {
+          console.error('Error:', loginXhr.status);
+        }
+      };
+
+      var loginData = {
+        email: email,
+        password: password
+      };
+
+      loginXhr.send(JSON.stringify(loginData));
+    } else if (xhr.status === 404) {
+      alert('Email not found');
+    } else {
+      console.error('Error:', xhr.status);
+    }
+  };
+
+  var searchData = {
+    email: email
+  };
+
+  xhr.send(JSON.stringify(searchData));
+});
+
 </script>
-
 </html>

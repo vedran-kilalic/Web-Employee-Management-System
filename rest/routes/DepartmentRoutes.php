@@ -1,11 +1,21 @@
 <?php
-
-if (isset($_SERVER['HTTP_ORIGIN'])) {
-    header("Access-Control-Allow-Origin: " . $_SERVER['HTTP_ORIGIN']);
+   if (isset($_SERVER['HTTP_ORIGIN'])) {
+    header("Access-Control-Allow-Origin: *");
     header('Access-Control-Allow-Credentials: true');
-    header('Access-Control-Max-Age: 86400'); 
+    header('Access-Control-Max-Age: 86400');    // cache for 1 day
 }
 
+
+if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+
+    if (isset($_SERVER['HTTP_ACCESS_CONTROL_REQUEST_METHOD']))
+        header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");         
+
+    if (isset($_SERVER['HTTP_ACCESS_CONTROL_REQUEST_HEADERS']))
+        header("Access-Control-Allow-Headers: {$_SERVER['HTTP_ACCESS_CONTROL_REQUEST_HEADERS']}");
+
+    exit(0);
+}
 /**
  * @OA\Get(
  *      path="/departments",
@@ -66,10 +76,14 @@ Flight::route('GET /departments/by_name/@name', function($name){
      * )
      * )
      */
-Flight::route('POST /departments', function(){
+Flight::route('POST /departments/add', function(){
     $data = Flight::request()->data->getData();
-    Flight::json(Flight::departmentService()->add($data));
-    Flight::json(["message" => "created"]);
+    try {
+        $department = Flight::departmentService()->add($data);
+        Flight::json($department);
+    } catch (Exception $e) {
+        Flight::json(["message" => $e->getMessage()], 500);
+    }
 });
 
 
@@ -107,7 +121,7 @@ Flight::route('POST /departments', function(){
  * )
  */
 
-Flight::route('PUT /departments/@id', function($id){
+Flight::route('PUT /departments/update/@id', function($id){
     $data = Flight::request()->data->getData();
     Flight::departmentService()->update($id, $data);
     Flight::json(["message" => "updated"]);
@@ -128,7 +142,7 @@ Flight::route('PUT /departments/@id', function($id){
      * )
      */
 
-Flight::route('DELETE /departments/@id', function($id){
+Flight::route('DELETE /departments/deleteDepartment/@id', function($id){
     Flight::departmentService()->delete($id);
     Flight::json(["message" => "deleted"]);
 });
