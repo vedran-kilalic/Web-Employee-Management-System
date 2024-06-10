@@ -80,7 +80,7 @@
 <script>
   // Fetch attendance data from the server and populate the table
   function fetchAttendanceData() {
-    fetch('https://seashell-app-mh569.ondigitalocean.app/rest/attendance')
+    fetch('http://localhost:80/Web-Employee-Management-System/rest/attendance')
       .then(response => response.json())
       .then(attendanceData => {
         const tableBody = document.getElementById('attendance-table-body');
@@ -112,7 +112,7 @@
     const searchValue = searchInput.value.trim();
 
     // Fetch attendance data from the server and filter based on employee ID
-    fetch('https://seashell-app-mh569.ondigitalocean.app/rest/attendance')
+    fetch('http://localhost:80/Web-Employee-Management-System/rest/attendance')
       .then(response => response.json())
       .then(attendanceData => {
         const filteredData = attendanceData.filter(attendance => {
@@ -151,7 +151,7 @@ document.getElementById('logout-link').addEventListener('click', function(event)
   var employeeId = getCookie('employeeId');
 
   var xhr = new XMLHttpRequest();
-  xhr.open('PUT', `https://seashell-app-mh569.ondigitalocean.app/rest/attendance/updateTimeOut/${employeeId}`);
+  xhr.open('PUT', `http://localhost:80/Web-Employee-Management-System/rest/attendance/updateTimeOut/${employeeId}`);
   xhr.setRequestHeader('Content-Type', 'application/json');
   xhr.onload = function() {
     if (xhr.status === 200) {
@@ -185,7 +185,7 @@ function updateStatus() {
   const employeeId = getCookie('employeeId');
             // Make AJAX call to update attendance status
             var xhr = new XMLHttpRequest();
-            xhr.open('PUT', 'https://seashell-app-mh569.ondigitalocean.app/rest/attendance/updateStatus/' + employeeId);
+            xhr.open('PUT', 'http://localhost:80/Web-Employee-Management-System/rest/attendance/updateStatus/' + employeeId);
             xhr.setRequestHeader('Content-Type', 'text/plain');
             xhr.onload = function() {
                 if (xhr.status === 200) {

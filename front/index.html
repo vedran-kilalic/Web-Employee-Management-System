@@ -94,7 +94,7 @@
   };
 
   // Fetch employee data from the API
-  fetch('https://seashell-app-mh569.ondigitalocean.app/rest/employees')
+  fetch('http://localhost:80/Web-Employee-Management-System/rest/employees')
     .then(response => response.json())
     .then(data => {
       const employeeTableBody = document.getElementById('employee-table-body');
@@ -156,7 +156,7 @@ document.getElementById('logout-link').addEventListener('click', function(event)
   var employeeId = getCookie('employeeId');
 
   var xhr = new XMLHttpRequest();
-  xhr.open('PUT', `https://seashell-app-mh569.ondigitalocean.app/rest/attendance/updateTimeOut/${employeeId}`);
+  xhr.open('PUT', `http://localhost:80/Web-Employee-Management-System/rest/attendance/updateTimeOut/${employeeId}`);
   xhr.setRequestHeader('Content-Type', 'application/json');
   xhr.onload = function() {
     if (xhr.status === 200) {

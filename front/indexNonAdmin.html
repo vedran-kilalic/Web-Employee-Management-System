@@ -89,7 +89,7 @@ $(document).ready(function() {
   const employeeId = getCookie('employeeId');
 
   // Fetch attendance data for the logged-in user and populate the table
-  $.get(`https://seashell-app-mh569.ondigitalocean.app/rest/attendance/by_employee_id/${employeeId}`, function(attendanceData) {
+  $.get(`http://localhost:80/Web-Employee-Management-System/rest/attendance/by_employee_id/${employeeId}`, function(attendanceData) {
     const tableBody = $('#attendance-table-body');
     tableBody.empty(); // Clear existing table rows
 
@@ -142,7 +142,7 @@ document.querySelector('header.main-head a[href="login.html"]').addEventListener
 
   // Make AJAX call to update attendance time_out
   var xhr = new XMLHttpRequest();
-  xhr.open('PUT', 'http://165.227.169.215:8080/attendance/updateTimeOut/' + employeeId);
+  xhr.open('PUT', 'http://localhost:80/Web-Employee-Management-System/rest/attendance/updateTimeOut/' + employeeId);
   xhr.setRequestHeader('Content-Type', 'application/json');
   xhr.onload = function() {
     if (xhr.status === 200) {

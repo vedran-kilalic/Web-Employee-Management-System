@@ -101,7 +101,7 @@
   const employeeId = urlParams.get('id');
 
   // Fetch the employee data from the server
-  fetch(`https://seashell-app-mh569.ondigitalocean.app/rest/employees/by_id/${employeeId}`)
+  fetch(`http://localhost:80/Web-Employee-Management-System/rest/employees/by_id/${employeeId}`)
     .then(response => response.json())
     .then(employeeData => {
       // Populate the input fields with the employee data
@@ -133,7 +133,7 @@
     };
 
     // Send the updated employee data to the server using Ajax
-    fetch(`https://seashell-app-mh569.ondigitalocean.app/rest/employees/update/${employeeId}`, {
+    fetch(`http://localhost:80/Web-Employee-Management-System/rest/employees/update/${employeeId}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json'
@@ -156,13 +156,13 @@
   // Function to handle delete button click
   const deleteEmployee = () => {
       if (confirm('Are you sure you want to delete this employee?')) {
-          fetch(`https://seashell-app-mh569.ondigitalocean.app/rest/employees/deleteEmployee/${employeeId}`, {
+          fetch(`http://localhost:80/Web-Employee-Management-System/rest/employees/deleteEmployee/${employeeId}`, {
               method: 'DELETE'
           })
               .then(response => {
                   if (response.ok) {
                       // Employee deleted successfully, redirect to another page or perform any desired action
-                      window.location.href = 'index.html.html';
+                      window.location.href = 'index.html';
                   } else {
                       throw new Error('Failed to delete employee');
                   }
@@ -188,7 +188,7 @@ document.getElementById('logout-link').addEventListener('click', function(event)
   var employeeId = getCookie('employeeId');
 
   var xhr = new XMLHttpRequest();
-  xhr.open('PUT', `https://seashell-app-mh569.ondigitalocean.app/rest/attendance/updateTimeOut/${employeeId}`);
+  xhr.open('PUT', `http://localhost:80/Web-Employee-Management-System/rest/attendance/updateTimeOut/${employeeId}`);
   xhr.setRequestHeader('Content-Type', 'application/json');
   xhr.onload = function() {
     if (xhr.status === 200) {

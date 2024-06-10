@@ -121,22 +121,22 @@ Flight::route('POST /login', function() {
         Flight::json(["message" => "Invalid email or password"], 401);
     }
 });
-Flight::route('POST /logout', function() {
-    try {
-        $token = Flight::request()->getHeader("Authentication");
-        if(!$token)
-            Flight::halt(401, "Missing authentication header");
+    Flight::route('POST /logout', function() {
+        try {
+            $token = Flight::request()->getHeader("Authentication");
+            if(!$token)
+                Flight::halt(401, "Missing authentication header");
 
-        $decoded_token = JWT::decode($token, new Key(Config::JWT_SECRET(), 'HS256'));
+            $decoded_token = JWT::decode($token, new Key(Config::JWT_SECRET(), 'HS256'));
 
-        Flight::json([
-            'jwt_decoded' => $decoded_token,
-            'user' => $decoded_token->user
-        ]);
-    } catch (\Exception $e) {
-        Flight::halt(401, $e->getMessage());
-    }
-});
+            Flight::json([
+                'jwt_decoded' => $decoded_token,
+                'user' => $decoded_token->user
+            ]);
+        } catch (\Exception $e) {
+            Flight::halt(401, $e->getMessage());
+        }
+    });
 
 
     /**

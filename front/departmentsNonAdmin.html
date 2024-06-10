@@ -66,7 +66,7 @@
 </body>
 <script>
   // Fetch department data from the API
-  fetch('https://seashell-app-mh569.ondigitalocean.app/rest/departments')
+  fetch('http://localhost:80/Web-Employee-Management-System/rest/departments')
     .then(response => response.json())
     .then(data => {
       const departmentTableBody = document.getElementById('department-table-body');
@@ -130,7 +130,7 @@ document.getElementById('logout-link').addEventListener('click', function(event)
   var employeeId = getCookie('employeeId');
 
   var xhr = new XMLHttpRequest();
-  xhr.open('PUT', `https://seashell-app-mh569.ondigitalocean.app/rest/attendance/updateTimeOut/${employeeId}`);
+  xhr.open('PUT', `http://localhost:80/Web-Employee-Management-System/rest/attendance/updateTimeOut/${employeeId}`);
   xhr.setRequestHeader('Content-Type', 'application/json');
   xhr.onload = function() {
     if (xhr.status === 200) {

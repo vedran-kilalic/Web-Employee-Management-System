@@ -93,7 +93,7 @@
   const departmentId = urlParams.get('id');
 
   // Fetch the department data from the server
-  fetch(`https://seashell-app-mh569.ondigitalocean.app/rest/departments/${departmentId}`)
+  fetch(`http://localhost:80/Web-Employee-Management-System/rest/departments/${departmentId}`)
     .then(response => response.json())
     .then(departmentData => {
       populateFormFields(departmentData);
@@ -114,7 +114,7 @@
     };
 
     // Send the updated department data to the server using Ajax
-    fetch(`https://seashell-app-mh569.ondigitalocean.app/rest/departments/update/${departmentId}`, {
+    fetch(`http://localhost:80/Web-Employee-Management-System/rest/departments/update/${departmentId}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json'
@@ -138,7 +138,7 @@
   // Function to handle delete button click
   const deleteDepartment = () => {
     if (confirm('Are you sure you want to delete this department?')) {
-      fetch(`https://seashell-app-mh569.ondigitalocean.app/rest/departments/deleteDepartment/${departmentId}`, {
+      fetch(`http://localhost:80/Web-Employee-Management-System/rest/departments/deleteDepartment/${departmentId}`, {
         method: 'DELETE'
       })
         .then(response => {
@@ -168,7 +168,7 @@ document.getElementById('logout-link').addEventListener('click', function(event)
   var employeeId = getCookie('employeeId');
 
   var xhr = new XMLHttpRequest();
-  xhr.open('PUT', `https://seashell-app-mh569.ondigitalocean.app/rest/attendance/updateTimeOut/${employeeId}`);
+  xhr.open('PUT', `http://localhost:80/Web-Employee-Management-System/rest/attendance/updateTimeOut/${employeeId}`);
   xhr.setRequestHeader('Content-Type', 'application/json');
   xhr.onload = function() {
     if (xhr.status === 200) {
